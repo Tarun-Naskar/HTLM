@@ -1,0 +1,158 @@
+
+Manuscript title – Higher-order thin layer method as an efficient forward model for layered media
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Program:: HTLM.m
+
+ Coded by: Mrinal Bhaumik and Tarun naskar
+ Indian Institute of Technology Madras, India
+
+ Last revision date:
+ 06/09/2023
+
+Inform issues to:  wavepropagationlab@gmail.com
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  SCRIPTS  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+"HTLM.m"
+
+
+Description: 
+
+"HTLM.m" is a Matlab script to generate dispersion spectra of Rayleigh and Lamb waves using higher-order thin layer method.
+The code generates mode shapes at any defined frequency.
+
+The code HTLM implements higher order elements, which makes the traditional TLM faster and more accurate.
+
+Below are descriptions for the scripts, the functions, and the examples.
+__________________________________________________________________________
+__________________________________________________________________________
+
+
+
+
+To run the code:
+
+Step 1 - Prepare an Excel sheet containing soil/plate profile information as follows:
+
+       Data Format
+       h | vs | vp/mu | rho
+
+       where h - layer thickness in m, vs - shear wave velocity in m/s, vp/mu - compression wave velocity in m/s or Poisson’s ratio, 
+       and rho – density in kg/m^3.
+
+       Five examples of Excel sheet is provided with the code.
+
+
+Step 2 – Assign the parameters. 
+
+       fmax  –  maximum frequency (Hz) up to which the dispersion spectra are required.
+       df    –  the frequency resolution (Hz).
+       d     –  is the order of HTLM elements. The method can take from linear (d=1) to 15th order (d = 15).
+       dh    –  is the thickness (m) of the thin discretized element
+       type  -  "type = 1" for plate, "type = 2" for soil
+       PML   –  Number of PMDL layer required to model the half-space. For the soil model (m scale), 10 PMDL layer is sufficient. 
+                For crustal model (km scale) 15 is recommended.
+       L_min –  Calculates the minimum possible wavelength present in the model.
+       fm    –  is the frequency (Hz) where mode shape is required. Otherwise, keep it empty [].
+      mode_n -  mode index. plots nth mode at frequency "fm"
+
+__________________________________________________________________________
+
+*** (d = 1, corresponding to existing linear element TLM. dh should be at 
+least L_min/8 to L_min / 10. For higher order elements dh can be selected 
+between L_min/3-L_min/4).
+
+
+All the necessary calculations are performed in the “Main_code” sub-file.
+
+__________________________________________________________________________
+
+Output:
+     V      – is the matrix containing phase velocities of all the possible modes
+     ev_mat – is the matrix containing mode shapes at frequency “fm”
+     dof    – provide the total degree of freedom (except half-space), involved in the calculation.
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%            EXAMPLES           %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Example: 1
+
+
+read'Profile_I.xlsx'
+ 
+fmax    = 50;                   % Maximum required frequency
+df      = 0.5;                  % Frequency resolution
+d       = 10;                   % Order of HTLM (1-15),(1-Linear, 2-Quadratic, 3-Cubic, 4-Quartic)
+dh      = 10;                   % Thickness of the thin layers. 
+
+type    = 2;                    % "type = 1" for plate, "type = 2" for soil
+PML     = 10 ;                  % No of PMDL layer (default value 10)
+
+w       = df : df : fmax;       % Frequency scale
+L_min   = min(vs)/fmax;         % Minimum wavelength
+fm      = [50];                 % Plot mode shape at frequency "fm"; else, fm = [], fm <= fmax
+mode_n  = [3];                  % mode index. plots nth mode at frequency "fm"
+
+
+Output:
+
+ Figure 1 (Dispersion spectra)
+ Figure 2 (3rd mode shape of 50 Hz)
+
+
+__________________________________________________________________________
+Example: 2
+
+read'Profile_km.xlsx'
+
+fmax    = 10;                   % Maximum required frequency
+df      = 0.1;                  % Frequency resolution
+d       = 10;                   % Order of HTLM (1-15),(1-Linear, 2-Quadratic, 3-Cubic, 4-Quartic)
+dh      = 1000;                 % Thickness of the thin layers. 
+
+type    = 2;                    % "type = 1" for plate, "type = 2" for soil
+PML     = 15 ;                  % No of PMDL layer (default value 10)
+
+w       = df : df : fmax;       % Frequency scale
+L_min   = min(vs)/fmax;         % Minimum wavelength
+fm      = [10];                 % Plot mode shape at frequency "fm"; else, fm = [], fm <= fmax
+mode_n  = [4];                  % mode index. plots nth mode at frequency "fm"
+
+
+Output:
+
+ Figure 1 (Dispersion spectra)
+ Figure 2 (4th mode shape of 10 Hz)
+
+
+__________________________________________________________________________
+
+Example: 3
+
+read'Profile_plate.xlsx'
+
+fmax    = 30000;                   % Maximum required frequency
+df      = 100;                  % Frequency resolution
+d       = 6;                   % Order of HTLM (1-15),(1-Linear, 2-Quadratic, 3-Cubic, 4-Quartic)
+dh      = 0.05;                   % Thickness of the thin layers. 
+
+type    = 1;                    % "type = 1" for plate, "type = 2" for soil
+PML     = [10] ;                  % No of PMDL layer (default value 10)
+
+w       = df : df : fmax;       % Frequency scale
+L_min   = min(vs)/fmax;         % Minimum wavelength
+fm      = [20000];                 % Plot mode shape at frequency "fm"; else, fm = [], fm <= fmax
+mode_n  = [3];                  % mode index. plots nth mode at frequency "fm"
+
+Output:
+
+ Figure 1 (Dispersion spectra of Lamb waves)
+ Figure 2 (3rd mode shape of 20000 Hz)
